@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>go-tw-his-parser - 台灣醫療資料解析器</title>
+    <meta name="description" content="台灣醫療資訊系統 (HIS) 資料解析器，支援健保署、耀聖、展望、看診大師等廠商格式">
+    <!-- 統一主題樣式 (2025-12-04) -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Saki-tw/go-tw-his-parser@main/static/css/theme.css">
+    <style>
+        :root {
+            --purple: #c6a4cf;
+            --blue: #89c3eb;
+            --bg: #faf8fb;
+            --text: #333;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Microsoft JhengHei", sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        header {
+            text-align: center;
+            padding: 60px 0;
+            border-bottom: 3px solid var(--purple);
+            margin-bottom: 40px;
+        }
+
+        h1 {
+            color: var(--purple);
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            color: var(--blue);
+            font-size: 1.2em;
+            margin-bottom: 20px;
+        }
+
+        .badges {
+            margin-top: 20px;
+        }
+
+        .badges img {
+            margin: 0 5px;
+        }
+
+        .section {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+
+        h2 {
+            color: var(--purple);
+            border-bottom: 2px solid var(--purple);
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+        }
+
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+        }
+
+        .feature {
+            text-align: center;
+            padding: 20px;
+            background: var(--bg);
+            border-radius: 8px;
+        }
+
+        .feature-icon {
+            font-size: 2em;
+            margin-bottom: 10px;
+        }
+
+        .feature h3 {
+            color: var(--purple);
+            margin-bottom: 8px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+        }
+
+        th {
+            background: var(--bg);
+            color: var(--purple);
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 15px 30px;
+            background: var(--purple);
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: bold;
+            margin: 10px;
+            transition: background 0.2s;
+        }
+
+        .btn:hover {
+            background: #b794c0;
+        }
+
+        .btn-secondary {
+            background: var(--blue);
+        }
+
+        .btn-secondary:hover {
+            background: #7ab3db;
+        }
+
+        .cta {
+            text-align: center;
+            padding: 40px 0;
+        }
+
+        .privacy-notice {
+            background: #e8f5e9;
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+            color: #2e7d32;
+        }
+
+        footer {
+            text-align: center;
+            padding: 40px;
+            color: #666;
+            border-top: 1px solid #eee;
+            margin-top: 40px;
+        }
+
+        footer a {
+            color: var(--purple);
+            text-decoration: none;
+        }
+
+        code {
+            background: #f5f5f5;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: "Consolas", "Monaco", monospace;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>go-tw-his-parser</h1>
+            <p class="subtitle">台灣醫療資訊系統 (HIS) 資料解析器</p>
+            <div class="badges">
+                <img src="https://img.shields.io/badge/License-MIT-blue.svg" alt="License">
+                <img src="https://img.shields.io/badge/Go-1.21+-00ADD8.svg" alt="Go Version">
+                <img src="https://img.shields.io/badge/Maintained%20by-Saki%20Studio-c6a4cf" alt="Saki Studio">
+            </div>
+        </header>
+
+        <div class="section">
+            <h2>專案簡介</h2>
+            <p>這是一個專為處理台灣常見醫療軟體（如耀聖、展望、看診大師等）匯出資料所設計的 Go 語言解析庫。它旨在解決醫療資料格式封閉、混亂且缺乏標準化的痛點，提供開發者一個乾淨、強型別的統一介面。</p>
+        </div>
+
+        <div class="section">
+            <h2>功能特色</h2>
+            <div class="features">
+                <div class="feature">
+                    <div class="feature-icon">📦</div>
+                    <h3>一鍵安裝</h3>
+                    <p>首次執行自動安裝，建立桌面捷徑</p>
+                </div>
+                <div class="feature">
+                    <div class="feature-icon">🔄</div>
+                    <h3>自動更新</h3>
+                    <p>背景檢查新版本，一鍵升級</p>
+                </div>
+                <div class="feature">
+                    <div class="feature-icon">🔍</div>
+                    <h3>自動編碼偵測</h3>
+                    <p>Big5 / UTF-8 自動辨識，告別亂碼</p>
+                </div>
+                <div class="feature">
+                    <div class="feature-icon">📅</div>
+                    <h3>民國年轉換</h3>
+                    <p>1140315 → 2025-03-15 自動轉換</p>
+                </div>
+                <div class="feature">
+                    <div class="feature-icon">💊</div>
+                    <h3>慢箋識別</h3>
+                    <p>自動判斷慢性處方箋與領藥次數</p>
+                </div>
+                <div class="feature">
+                    <div class="feature-icon">🏭</div>
+                    <h3>廠商辨識</h3>
+                    <p>根據內容特徵自動判斷 HIS 廠商</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>支援廠商</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>廠商</th>
+                        <th>支援格式</th>
+                        <th>說明</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>健保署標準</td>
+                        <td>XML, CSV</td>
+                        <td>每日上傳檔、月申報檔</td>
+                    </tr>
+                    <tr>
+                        <td>耀聖 HIS</td>
+                        <td>XML, CSV, DAT, TXT</td>
+                        <td>完整支援各種匯出格式</td>
+                    </tr>
+                    <tr>
+                        <td>展望 HIS</td>
+                        <td>XML, CSV</td>
+                        <td>常見的診所系統</td>
+                    </tr>
+                    <tr>
+                        <td>看診大師</td>
+                        <td>XML, CSV, TXT</td>
+                        <td>支援 pipe 分隔格式</td>
+                    </tr>
+                    <tr>
+                        <td>通用格式</td>
+                        <td>CSV, TXT</td>
+                        <td>標準逗號分隔檔案</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="section">
+            <h2>隱私保護</h2>
+            <div class="privacy-notice">
+                <p>🔒 <strong>本機解析</strong> — 醫療資料不上傳、不儲存</p>
+                <p>身分證號碼自動遮蔽顯示</p>
+                <p style="font-size: 0.9em; margin-top: 10px; color: #555;">自動更新僅連接 GitHub API 檢查版本，不傳送任何使用者資料</p>
+            </div>
+        </div>
+
+        <div class="cta">
+            <a href="https://github.com/Saki-tw/go-tw-his-parser/releases" class="btn">下載執行檔</a>
+            <a href="https://github.com/Saki-tw/go-tw-his-parser" class="btn btn-secondary">查看原始碼</a>
+        </div>
+
+        <div class="section">
+            <h2>快速開始</h2>
+            <p><strong>方式一：下載執行檔（推薦）</strong></p>
+            <p>從 <a href="https://github.com/Saki-tw/go-tw-his-parser/releases">Releases</a> 下載對應平台的執行檔，雙擊即可使用。</p>
+            <table style="margin: 15px 0; font-size: 0.9em;">
+                <tr><th>平台</th><th>安裝位置</th><th>捷徑</th></tr>
+                <tr><td>Windows</td><td><code>%LOCALAPPDATA%\HIS Parser\</code></td><td>開始選單 + 桌面</td></tr>
+                <tr><td>macOS</td><td><code>~/Applications/HIS Parser.app</code></td><td>啟動台</td></tr>
+                <tr><td>Linux</td><td><code>~/.local/share/his-parser/</code></td><td>應用程式選單</td></tr>
+            </table>
+            <p style="font-size: 0.85em; color: #666;">Windows 無需管理員權限，不會彈出 UAC 對話框</p>
+            <br>
+            <p><strong>方式二：Go 程式庫</strong></p>
+            <pre><code>go get github.com/Saki-tw/go-tw-his-parser</code></pre>
+        </div>
+
+        <div class="section" style="background: #faf8fb; border: 1px solid #eee;">
+            <p style="color: #888; font-size: 0.9em; margin-bottom: 10px;">
+                本專案脫胎自 <a href="https://saki-studio.com.tw/saki-pharmacy-os/" style="color: var(--purple);">Saki Pharmacy OS</a> 內部使用的資料處理模組。既然這部分只是格式轉換的苦工，不如開源出來讓有相同需求的人省去重複造輪子的麻煩。
+            </p>
+            <p style="color: #aaa; font-size: 0.85em;">
+                感謝妙法無邊雷射蓮花宗在艱困時刻寄來的糖與米 🙏
+            </p>
+        </div>
+
+        <footer>
+            <p>© 2025 <a href="https://saki-studio.com.tw">Saki Studio</a></p>
+            <p>MIT License</p>
+        </footer>
+    </div>
+</body>
+</html>

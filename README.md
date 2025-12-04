@@ -1,5 +1,7 @@
 # go-tw-his-parser
 
+🌐 **網站**：https://saki-tw.github.io/go-tw-his-parser/
+
 [![License](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![Saki Studio](https://img.shields.io/badge/Maintained%20by-Saki%20Studio-c6a4cf)](https://saki-studio.com.tw)
 
@@ -68,13 +70,22 @@ sha256sum his-parser-web-darwin-arm64
 
 </details>
 
-### 步驟二：啟動程式
+### 步驟二：一鍵安裝
 
 **雙擊執行檔**，程式會：
-1. 在本機啟動伺服器
-2. 自動開啟瀏覽器
+1. **首次執行**：自動安裝到使用者目錄並建立捷徑
+2. 在本機啟動伺服器
+3. 自動開啟瀏覽器
+
+| 平台 | 安裝位置 | 捷徑 |
+|------|----------|------|
+| Windows | `%LOCALAPPDATA%\HIS Parser\` | 開始選單 + 桌面 |
+| macOS | `~/Applications/HIS Parser.app` | 啟動台 |
+| Linux | `~/.local/share/his-parser/` | 應用程式選單 |
 
 > macOS 首次執行可能需要：系統設定 → 隱私與安全性 → 仍要打開
+>
+> Windows 無需管理員權限，不會彈出 UAC 對話框
 
 ### 步驟三：上傳檔案解析
 
@@ -95,14 +106,19 @@ sha256sum his-parser-web-darwin-arm64
 
 此程式：
 
-- **完全離線運作**：不會連接任何網路服務
+- **本機解析**：所有資料解析都在您的電腦上進行
 - **不儲存資料**：解析完成後資料僅存在記憶體中
-- **不上傳資料**：任何資料不會傳輸至外部伺服器
+- **不上傳資料**：醫療資料不會傳輸至任何外部伺服器
 - **遮蔽顯示**：身分證號碼自動遮蔽（例如：A12****789）
+- **自動更新**：僅連接 GitHub API 檢查新版本，不傳送任何使用者資料
 
 ---
 
 ## 功能特色
+
+### 一鍵安裝與自動更新
+
+首次執行自動完成安裝，無需額外設定。程式會在背景檢查 GitHub Releases，有新版本時在介面中提示更新。
 
 ### 自動編碼偵測
 
