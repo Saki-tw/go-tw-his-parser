@@ -1,0 +1,18 @@
+# 編譯產物
+*.exe
+*.dll
+*.so
+*.dylib
+
+# 測試檔案
+*.test
+*.out
+
+# IDE 設定
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# macOS
+.DS_Store

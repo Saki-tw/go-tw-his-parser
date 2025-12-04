@@ -1,0 +1,81 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.21'
+
+      - name: Build Windows
+        run: |
+          cd cmd/web
+          GOOS=windows GOARCH=amd64 go build -ldflags="-s -w" -o his-parser-web-windows.exe
+
+      - name: Build macOS (Apple Silicon)
+        run: |
+          cd cmd/web
+          GOOS=darwin GOARCH=arm64 go build -ldflags="-s -w" -o his-parser-web-darwin-arm64
+
+      - name: Build Linux
+        run: |
+          cd cmd/web
+          GOOS=linux GOARCH=amd64 go build -ldflags="-s -w" -o his-parser-web-linux-amd64
+
+      - name: Generate SHA256 checksums
+        run: |
+          cd cmd/web
+          sha256sum his-parser-web-windows.exe > checksums.txt
+          sha256sum his-parser-web-darwin-arm64 >> checksums.txt
+          sha256sum his-parser-web-linux-amd64 >> checksums.txt
+          echo "" >> checksums.txt
+          echo "驗證方式:" >> checksums.txt
+          echo "Windows PowerShell: Get-FileHash -Algorithm SHA256 his-parser-web-windows.exe" >> checksums.txt
+          echo "macOS/Linux: sha256sum -c checksums.txt" >> checksums.txt
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: |
+            cmd/web/his-parser-web-windows.exe
+            cmd/web/his-parser-web-darwin-arm64
+            cmd/web/his-parser-web-linux-amd64
+            cmd/web/checksums.txt
+          body: |
+            ## 下載
+
+            | 作業系統 | 檔案 |
+            |----------|------|
+            | Windows | `his-parser-web-windows.exe` |
+            | macOS (Apple Silicon) | `his-parser-web-darwin-arm64` |
+            | Linux | `his-parser-web-linux-amd64` |
+
+            ## 安全性驗證
+
+            SHA256 校驗碼見 `checksums.txt`
+
+            ## 使用方式
+
+            雙擊執行檔，瀏覽器會自動開啟。
+
+            ---
+            此版本由 GitHub Actions 自動建置，建置過程完全公開透明。
+          draft: false
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

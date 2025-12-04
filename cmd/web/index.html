@@ -1,0 +1,714 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>台灣醫療資料解析器 - Saki Studio</title>
+    <style>
+        :root {
+            --purple: #c6a4cf;
+            --blue: #89c3eb;
+            --green: #90c390;
+            --red: #dc9696;
+            --bg: #faf8fb;
+            --card: #ffffff;
+            --text: #333333;
+            --border: #e0e0e0;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Microsoft JhengHei", sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* Header */
+        header {
+            text-align: center;
+            padding: 30px 0;
+            border-bottom: 2px solid var(--purple);
+            margin-bottom: 30px;
+        }
+
+        header h1 {
+            color: var(--purple);
+            font-size: 28px;
+            margin-bottom: 8px;
+        }
+
+        header p {
+            color: var(--blue);
+            font-size: 14px;
+        }
+
+        header a {
+            color: var(--blue);
+            text-decoration: none;
+        }
+
+        header a:hover {
+            text-decoration: underline;
+        }
+
+        /* Cards */
+        .card {
+            background: var(--card);
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+
+        .card h2 {
+            color: var(--purple);
+            font-size: 18px;
+            margin-bottom: 16px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        /* Form */
+        .form-row {
+            display: flex;
+            gap: 16px;
+            align-items: center;
+            flex-wrap: wrap;
+            margin-bottom: 16px;
+        }
+
+        .form-group {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        label {
+            font-weight: 600;
+            white-space: nowrap;
+        }
+
+        select {
+            padding: 10px 16px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            font-size: 14px;
+            background: white;
+            cursor: pointer;
+        }
+
+        select:focus {
+            outline: none;
+            border-color: var(--purple);
+        }
+
+        /* File Input */
+        .file-input-wrapper {
+            position: relative;
+            display: inline-block;
+        }
+
+        .file-input-wrapper input[type="file"] {
+            position: absolute;
+            opacity: 0;
+            width: 100%;
+            height: 100%;
+            cursor: pointer;
+        }
+
+        .file-label {
+            display: inline-block;
+            padding: 12px 24px;
+            background: var(--purple);
+            color: white;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .file-label:hover {
+            background: #b794c0;
+        }
+
+        .file-name {
+            margin-left: 12px;
+            color: #666;
+        }
+
+        /* Buttons */
+        button {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-primary {
+            background: var(--purple);
+            color: white;
+        }
+
+        .btn-primary:hover:not(:disabled) {
+            background: #b794c0;
+        }
+
+        .btn-primary:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+
+        .btn-secondary {
+            background: var(--blue);
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #7ab3db;
+        }
+
+        .btn-outline {
+            background: white;
+            color: var(--text);
+            border: 1px solid var(--border);
+        }
+
+        .btn-outline:hover {
+            background: #f5f5f5;
+        }
+
+        /* Status */
+        .status {
+            padding: 12px 16px;
+            border-radius: 8px;
+            margin-top: 16px;
+            display: none;
+        }
+
+        .status.loading {
+            display: block;
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .status.success {
+            display: block;
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .status.error {
+            display: block;
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        /* Stats */
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 16px;
+            margin-bottom: 20px;
+        }
+
+        .stat-item {
+            text-align: center;
+            padding: 16px;
+            background: var(--bg);
+            border-radius: 8px;
+        }
+
+        .stat-value {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--purple);
+        }
+
+        .stat-label {
+            font-size: 14px;
+            color: #666;
+            margin-top: 4px;
+        }
+
+        /* Tabs */
+        .tabs {
+            display: flex;
+            border-bottom: 2px solid var(--border);
+            margin-bottom: 16px;
+        }
+
+        .tab {
+            padding: 12px 20px;
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+            margin-bottom: -2px;
+            font-weight: 500;
+            color: #666;
+            transition: all 0.2s;
+        }
+
+        .tab:hover {
+            color: var(--purple);
+        }
+
+        .tab.active {
+            color: var(--purple);
+            border-bottom-color: var(--purple);
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* Table */
+        .table-wrapper {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+        }
+
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid var(--border);
+        }
+
+        th {
+            background: var(--bg);
+            font-weight: 600;
+            color: var(--purple);
+            position: sticky;
+            top: 0;
+        }
+
+        tr:hover td {
+            background: #faf8fb;
+        }
+
+        /* Raw output */
+        .raw-output {
+            background: #f8f9fa;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 16px;
+            font-family: "Consolas", "Monaco", monospace;
+            font-size: 13px;
+            white-space: pre-wrap;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 20px;
+            color: #666;
+            font-size: 14px;
+            border-top: 1px solid var(--border);
+            margin-top: 40px;
+        }
+
+        footer a {
+            color: var(--purple);
+            text-decoration: none;
+        }
+
+        /* Privacy notice */
+        .privacy-notice {
+            background: #e8f5e9;
+            padding: 12px 16px;
+            border-radius: 8px;
+            font-size: 13px;
+            color: #2e7d32;
+            margin-top: 16px;
+        }
+
+        /* Export buttons */
+        .export-buttons {
+            display: flex;
+            gap: 8px;
+            margin-top: 16px;
+        }
+
+        /* Hidden */
+        .hidden {
+            display: none !important;
+        }
+
+        /* Responsive */
+        @media (max-width: 600px) {
+            .form-row {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .stats {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>台灣醫療資料解析器</h1>
+            <p>Saki Studio | <a href="https://sakistudio.com.tw" target="_blank">sakistudio.com.tw</a></p>
+        </header>
+
+        <!-- 上傳區塊 -->
+        <div class="card">
+            <h2>選擇檔案</h2>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label>HIS 廠商：</label>
+                    <select id="vendorSelect">
+                        <option value="auto">自動偵測（推薦）</option>
+                        <option value="nhi">健保署標準</option>
+                        <option value="yaosheng">耀聖 HIS</option>
+                        <option value="vision">展望 HIS</option>
+                        <option value="drmaster">看診大師</option>
+                        <option value="generic">通用 CSV</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="file-input-wrapper">
+                    <span class="file-label">選擇檔案</span>
+                    <input type="file" id="fileInput" accept=".xml,.csv,.txt,.dat,.XML,.CSV,.TXT,.DAT">
+                </div>
+                <span class="file-name" id="fileName">尚未選擇檔案</span>
+            </div>
+
+            <div class="form-row">
+                <button class="btn-primary" id="parseBtn" disabled>開始解析</button>
+                <button class="btn-outline" id="clearBtn">清除結果</button>
+            </div>
+
+            <div class="status" id="status"></div>
+
+            <div class="privacy-notice">
+                🔒 此程式完全離線運作，不會上傳任何資料。身分證號碼會自動遮蔽顯示。
+            </div>
+        </div>
+
+        <!-- 結果區塊 -->
+        <div class="card hidden" id="resultCard">
+            <h2>解析結果</h2>
+
+            <!-- 統計 -->
+            <div class="stats">
+                <div class="stat-item">
+                    <div class="stat-value" id="statPatients">0</div>
+                    <div class="stat-label">病患數</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value" id="statPrescriptions">0</div>
+                    <div class="stat-label">處方數</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value" id="statDrugs">0</div>
+                    <div class="stat-label">藥品種類</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value" id="statVendor">--</div>
+                    <div class="stat-label">偵測廠商</div>
+                </div>
+            </div>
+
+            <!-- 分頁 -->
+            <div class="tabs">
+                <div class="tab active" data-tab="patients">病患列表</div>
+                <div class="tab" data-tab="prescriptions">處方列表</div>
+                <div class="tab" data-tab="raw">詳細輸出</div>
+            </div>
+
+            <!-- 病患列表 -->
+            <div class="tab-content active" id="tab-patients">
+                <div class="table-wrapper">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>姓名</th>
+                                <th>身分證（遮蔽）</th>
+                                <th>生日</th>
+                                <th>電話</th>
+                            </tr>
+                        </thead>
+                        <tbody id="patientsTable"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- 處方列表 -->
+            <div class="tab-content" id="tab-prescriptions">
+                <div class="table-wrapper">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>病患</th>
+                                <th>調劑日期</th>
+                                <th>就醫類別</th>
+                                <th>慢箋次數</th>
+                                <th>藥品數</th>
+                            </tr>
+                        </thead>
+                        <tbody id="prescriptionsTable"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- 詳細輸出 -->
+            <div class="tab-content" id="tab-raw">
+                <div class="raw-output" id="rawOutput"></div>
+            </div>
+
+            <!-- 匯出 -->
+            <div class="export-buttons">
+                <button class="btn-secondary" id="exportJSON">匯出 JSON</button>
+                <button class="btn-secondary" id="exportCSV">匯出 CSV</button>
+            </div>
+        </div>
+
+        <footer>
+            © 2025 <a href="https://sakistudio.com.tw" target="_blank">Saki Studio</a> | MIT License
+        </footer>
+    </div>
+
+    <script>
+        // 全域變數
+        let currentResult = null;
+        let currentFilename = '';
+
+        // DOM 元素
+        const fileInput = document.getElementById('fileInput');
+        const fileName = document.getElementById('fileName');
+        const vendorSelect = document.getElementById('vendorSelect');
+        const parseBtn = document.getElementById('parseBtn');
+        const clearBtn = document.getElementById('clearBtn');
+        const status = document.getElementById('status');
+        const resultCard = document.getElementById('resultCard');
+
+        // 檔案選擇
+        fileInput.addEventListener('change', function() {
+            if (this.files.length > 0) {
+                fileName.textContent = this.files[0].name;
+                parseBtn.disabled = false;
+            } else {
+                fileName.textContent = '尚未選擇檔案';
+                parseBtn.disabled = true;
+            }
+        });
+
+        // 解析按鈕
+        parseBtn.addEventListener('click', async function() {
+            if (!fileInput.files.length) return;
+
+            const file = fileInput.files[0];
+            currentFilename = file.name;
+
+            // 顯示載入中
+            showStatus('loading', '正在解析 ' + file.name + ' ...');
+            parseBtn.disabled = true;
+
+            try {
+                const formData = new FormData();
+                formData.append('file', file);
+                formData.append('vendor', vendorSelect.value);
+
+                const response = await fetch('/api/parse', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const result = await response.json();
+                currentResult = result;
+
+                if (result.success || (result.patients && result.patients.length > 0)) {
+                    showStatus('success', '解析完成！');
+                    displayResult(result);
+                } else {
+                    const errorMsg = result.errors ? result.errors.join(', ') : '未知錯誤';
+                    showStatus('error', '解析失敗: ' + errorMsg);
+                }
+            } catch (error) {
+                showStatus('error', '發生錯誤: ' + error.message);
+            }
+
+            parseBtn.disabled = false;
+        });
+
+        // 清除按鈕
+        clearBtn.addEventListener('click', function() {
+            fileInput.value = '';
+            fileName.textContent = '尚未選擇檔案';
+            parseBtn.disabled = true;
+            status.className = 'status';
+            resultCard.classList.add('hidden');
+            currentResult = null;
+        });
+
+        // 分頁切換
+        document.querySelectorAll('.tab').forEach(tab => {
+            tab.addEventListener('click', function() {
+                document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+
+                this.classList.add('active');
+                document.getElementById('tab-' + this.dataset.tab).classList.add('active');
+            });
+        });
+
+        // 匯出 JSON
+        document.getElementById('exportJSON').addEventListener('click', function() {
+            if (!currentResult) return;
+
+            const blob = new Blob([JSON.stringify(currentResult, null, 2)], {type: 'application/json'});
+            downloadFile(blob, currentFilename.replace(/\.[^.]+$/, '') + '_解析結果.json');
+        });
+
+        // 匯出 CSV
+        document.getElementById('exportCSV').addEventListener('click', function() {
+            if (!currentResult) return;
+
+            let csv = '\ufeff'; // BOM for Excel
+
+            // 病患資料
+            csv += '=== 病患資料 ===\n';
+            csv += '姓名,身分證,生日,電話\n';
+            if (currentResult.patients) {
+                currentResult.patients.forEach(p => {
+                    csv += `"${p.name || ''}","${p.national_id || ''}","${p.birthday || ''}","${p.phone || ''}"\n`;
+                });
+            }
+
+            csv += '\n=== 處方資料 ===\n';
+            csv += '病患,調劑日期,處方號,就醫類別,慢箋次數,藥品數\n';
+            if (currentResult.prescriptions) {
+                currentResult.prescriptions.forEach(rx => {
+                    csv += `"${rx.patient_id || ''}","${rx.dispense_date || ''}","${rx.prescription_no || ''}","${rx.visit_type || ''}",${rx.chronic_refill_no || 0},${rx.items ? rx.items.length : 0}\n`;
+                });
+            }
+
+            const blob = new Blob([csv], {type: 'text/csv;charset=utf-8'});
+            downloadFile(blob, currentFilename.replace(/\.[^.]+$/, '') + '_解析結果.csv');
+        });
+
+        // 輔助函數
+        function showStatus(type, message) {
+            status.className = 'status ' + type;
+            status.textContent = message;
+        }
+
+        function displayResult(result) {
+            resultCard.classList.remove('hidden');
+
+            // 統計
+            document.getElementById('statPatients').textContent = result.patients ? result.patients.length : 0;
+            document.getElementById('statPrescriptions').textContent = result.prescriptions ? result.prescriptions.length : 0;
+            document.getElementById('statDrugs').textContent = result.drug_usages ? result.drug_usages.length : 0;
+            document.getElementById('statVendor').textContent = getVendorName(result.source_vendor);
+
+            // 病患表格
+            const patientsTable = document.getElementById('patientsTable');
+            patientsTable.innerHTML = '';
+            if (result.patients) {
+                result.patients.forEach(p => {
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td>${escapeHtml(p.name || '--')}</td>
+                        <td>${escapeHtml(p.national_id || '--')}</td>
+                        <td>${escapeHtml(p.birthday || '--')}</td>
+                        <td>${escapeHtml(p.phone || '--')}</td>
+                    `;
+                    patientsTable.appendChild(tr);
+                });
+            }
+
+            // 處方表格
+            const rxTable = document.getElementById('prescriptionsTable');
+            rxTable.innerHTML = '';
+            if (result.prescriptions) {
+                result.prescriptions.forEach(rx => {
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td>${escapeHtml(rx.patient_id || '--')}</td>
+                        <td>${escapeHtml(rx.dispense_date || '--')}</td>
+                        <td>${escapeHtml(getVisitTypeName(rx.visit_type))}</td>
+                        <td>${rx.chronic_refill_no > 0 ? '第 ' + rx.chronic_refill_no + ' 次' : '--'}</td>
+                        <td>${rx.items ? rx.items.length : 0}</td>
+                    `;
+                    rxTable.appendChild(tr);
+                });
+            }
+
+            // 詳細輸出
+            document.getElementById('rawOutput').textContent = JSON.stringify(result, null, 2);
+        }
+
+        function getVendorName(vendor) {
+            const names = {
+                'nhi': '健保署',
+                'yaosheng': '耀聖',
+                'vision': '展望',
+                'drmaster': '看診大師',
+                'generic': '通用格式',
+                'auto': '自動偵測'
+            };
+            return names[vendor] || vendor || '--';
+        }
+
+        function getVisitTypeName(type) {
+            const names = {
+                '08': '慢箋',
+                'AF': '釋出處方',
+                '01': '一般門診'
+            };
+            return names[type] || type || '--';
+        }
+
+        function escapeHtml(text) {
+            if (!text) return '';
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        function downloadFile(blob, filename) {
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = filename;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+    </script>
+</body>
+</html>
