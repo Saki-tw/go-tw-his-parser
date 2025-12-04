@@ -3,10 +3,26 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>go-tw-his-parser - 台灣醫療資料解析器</title>
-    <meta name="description" content="台灣醫療資訊系統 (HIS) 資料解析器，支援健保署、耀聖、展望、看診大師等廠商格式">
+    <title>go-tw-his-parser - 台灣醫療資料解析器, A high-performance Golang parser for Taiwan NHI VPN declaration format | 台灣健保申報格式解析器</title>
+    <meta name="description" content="台灣醫療資訊系統 (HIS) 資料解析器，支援健保署、耀聖、展望、看診大師等廠商格式。A high-performance Golang parser for Taiwan NHI (National Health Insurance) VPN declaration format. Handles legacy HIS data, IC card uploads, and prescription decoding. 台灣健保申報格式解析器，支援健保醫療資訊系統、醫令清單、健保卡上傳格式。">
+    <meta name="keywords" content="golang, his, nhi, taiwan, parser, 健保申報, 醫療資訊系統, Golang HIS, 健保申報格式解析">
     <!-- 統一主題樣式 (2025-12-04) -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Saki-tw/go-tw-his-parser@main/static/css/theme.css">
+    <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "SoftwareSourceCode",
+  "name": "go-tw-his-parser",
+  "programmingLanguage": "Go",
+  "description": "A high-performance parser for Taiwan NHI VPN declaration format. 台灣健保申報格式解析器，支援 IC 卡上傳格式與醫令清單。",
+  "keywords": "golang, his, nhi, taiwan, parser, 健保申報, 醫療資訊系統",
+  "codeRepository": "https://github.com/Saki-tw/go-tw-his-parser",
+  "author": {
+    "@type": "Person",
+    "name": "Saki"
+  }
+}
+    </script>
     <style>
         :root {
             --purple: #c6a4cf;
@@ -179,7 +195,7 @@
     <div class="container">
         <header>
             <h1>go-tw-his-parser</h1>
-            <p class="subtitle">台灣醫療資訊系統 (HIS) 資料解析器</p>
+            <p class="subtitle">台灣醫療資訊系統 (HIS) 資料解析器 — Golang HIS Parser | 台灣健保申報格式解析</p>
             <div class="badges">
                 <img src="https://img.shields.io/badge/License-MIT-blue.svg" alt="License">
                 <img src="https://img.shields.io/badge/Go-1.21+-00ADD8.svg" alt="Go Version">
@@ -189,7 +205,8 @@
 
         <div class="section">
             <h2>專案簡介</h2>
-            <p>這是一個專為處理台灣常見醫療軟體（如耀聖、展望、看診大師等）匯出資料所設計的 Go 語言解析庫。它旨在解決醫療資料格式封閉、混亂且缺乏標準化的痛點，提供開發者一個乾淨、強型別的統一介面。</p>
+            <p><strong>A high-performance Golang parser for Taiwan NHI VPN declaration format.</strong></p>
+            <p>這是一個專為處理台灣常見醫療軟體（如耀聖、展望、看診大師等）匯出資料所設計的 Go 語言解析庫。它旨在解決健保申報格式封閉、HIS 資料混亂且缺乏標準化的痛點，提供開發者一個乾淨、強型別的統一介面，支援健保 IC 卡上傳格式與 VPN 申報檔解析。</p>
         </div>
 
         <div class="section">

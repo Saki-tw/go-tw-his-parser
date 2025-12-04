@@ -1,13 +1,18 @@
 # go-tw-his-parser
 
+> **A high-performance Golang parser for Taiwan NHI (National Health Insurance) VPN declaration format. Handles legacy HIS data, IC card uploads, and prescription decoding.**
+>
+> **台灣健保申報格式解析器** (健保醫療資訊系統/醫令清單/健保卡上傳格式)
+
 🌐 **網站**：https://saki-tw.github.io/go-tw-his-parser/
 
 [![License](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+[![Go](https://img.shields.io/badge/Go-1.21+-00ADD8.svg)](https://go.dev/)
 [![Saki Studio](https://img.shields.io/badge/Maintained%20by-Saki%20Studio-c6a4cf)](https://saki-studio.com.tw)
 
-**台灣醫療資訊系統 (HIS) 資料解析器**
+**Golang HIS 資料解析器 — 台灣健保申報格式解析的開源解決方案**
 
-這是一個專為處理台灣常見醫療軟體（如耀聖、展望、看診大師等）匯出資料所設計的 Go 語言解析庫。它旨在解決醫療資料格式封閉、混亂且缺乏標準化的痛點，提供開發者一個乾淨、強型別的統一介面。
+這是一個專為處理台灣常見醫療軟體（如耀聖、展望、看診大師等）匯出資料所設計的 Go 語言解析庫。它旨在解決健保申報格式封閉、HIS 資料混亂且缺乏標準化的痛點，提供開發者一個乾淨、強型別的統一介面，支援健保 IC 卡上傳格式與 VPN 申報檔解析。
 
 ---
 
