@@ -295,6 +295,45 @@
             </div>
         </div>
 
+        <!-- WASM Demo 區塊 -->
+        <div class="section" id="demo-section" style="background: linear-gradient(135deg, #faf8fb 0%, #f0e6f4 100%);">
+            <h2>🧪 線上試玩</h2>
+            <p style="margin-bottom: 15px;">
+                <strong>不用下載、不用安裝</strong> — 把你手上那份亂七八糟的健保申報文字檔貼進來，按一下按鈕，瞬間變成漂亮的 JSON。
+            </p>
+            <p style="font-size: 0.9em; color: #666; margin-bottom: 20px;">
+                這個 Demo 使用 <strong>WebAssembly</strong> 技術，解析器直接在你的瀏覽器裡執行。<br>
+                資料不會上傳到任何伺服器 — 你的病患資料，只有你的電腦知道。
+            </p>
+
+            <div id="wasm-status" style="padding: 10px; border-radius: 6px; margin-bottom: 15px; background: #fff3cd; color: #856404;">
+                ⏳ 正在載入解析引擎 (約 3.5MB)...
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                <div>
+                    <label style="font-weight: bold; color: var(--purple);">輸入（貼上 HIS 匯出資料）</label>
+                    <textarea id="input-data" placeholder="T,1140101,01,A123456789,王小明,65,M,0,1,1,,1140101,08,1,02,...
+D,1,01,AC12345100,藥品名稱,1.0,28,QD,PC,口服..." style="width: 100%; height: 300px; margin-top: 8px; padding: 12px; border: 2px solid #ddd; border-radius: 8px; font-family: Consolas, Monaco, monospace; font-size: 12px; resize: vertical;"></textarea>
+                    <div style="margin-top: 10px;">
+                        <button id="parse-btn" onclick="parseData()" disabled style="padding: 12px 24px; background: var(--purple); color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; opacity: 0.5;">
+                            ✨ 解析成 JSON
+                        </button>
+                        <button onclick="loadSampleData()" style="padding: 12px 24px; background: var(--blue); color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; margin-left: 10px;">
+                            📋 載入範例資料
+                        </button>
+                    </div>
+                </div>
+                <div>
+                    <label style="font-weight: bold; color: var(--purple);">輸出（結構化 JSON）</label>
+                    <div id="output-summary" style="margin-top: 8px; padding: 10px; background: #e8f5e9; border-radius: 6px; display: none;">
+                        <span id="summary-text"></span>
+                    </div>
+                    <pre id="output-data" style="width: 100%; height: 280px; margin-top: 8px; padding: 12px; background: #1e1e1e; color: #d4d4d4; border-radius: 8px; font-family: Consolas, Monaco, monospace; font-size: 11px; overflow: auto; white-space: pre-wrap;">// 解析結果會顯示在這裡</pre>
+                </div>
+            </div>
+        </div>
+
         <div class="cta">
             <a href="https://github.com/Saki-tw/go-tw-his-parser/releases" class="btn">下載執行檔</a>
             <a href="https://github.com/Saki-tw/go-tw-his-parser" class="btn btn-secondary">查看原始碼</a>
@@ -336,5 +375,92 @@
             <p>MIT License</p>
         </footer>
     </div>
+
+    <!-- WASM 載入 -->
+    <script src="wasm_exec.js"></script>
+    <script>
+        // 範例資料
+        const sampleData = `T,1140315,01,A123456789,王小明,65,M,0,1,1,,1140315,08,1,02,
+D,1,01,AC12345100,AMLODIPINE 5MG,1.0,28,QD,PC,口服
+D,1,02,AC23456100,METFORMIN 500MG,2.0,28,BID,PC,口服
+D,1,03,AC34567100,ASPIRIN 100MG,1.0,28,QD,PC,口服
+T,1140315,02,B234567890,李小華,58,F,0,1,1,,1140315,01,1,01,
+D,2,01,AC45678100,LISINOPRIL 10MG,1.0,14,QD,AC,口服
+D,2,02,AC56789100,OMEPRAZOLE 20MG,1.0,14,QD,AC,口服`;
+
+        // 載入範例資料
+        function loadSampleData() {
+            document.getElementById('input-data').value = sampleData;
+        }
+
+        // 解析資料
+        function parseData() {
+            const input = document.getElementById('input-data').value;
+            const outputEl = document.getElementById('output-data');
+            const summaryEl = document.getElementById('output-summary');
+            const summaryText = document.getElementById('summary-text');
+
+            if (!input.trim()) {
+                outputEl.textContent = '// 請先輸入或貼上資料';
+                summaryEl.style.display = 'none';
+                return;
+            }
+
+            try {
+                const result = parseHISData(input, 'input.txt');
+
+                if (result.success) {
+                    outputEl.textContent = result.data;
+                    summaryEl.style.display = 'block';
+                    summaryText.innerHTML = `✅ 解析成功！找到 <strong>${result.summary.patients}</strong> 位病患、<strong>${result.summary.prescriptions}</strong> 筆處方`;
+                } else {
+                    outputEl.textContent = '// 解析失敗: ' + result.error;
+                    summaryEl.style.display = 'none';
+                }
+            } catch (e) {
+                outputEl.textContent = '// 發生錯誤: ' + e.message;
+                summaryEl.style.display = 'none';
+            }
+        }
+
+        // 初始化 WASM
+        async function initWasm() {
+            const statusEl = document.getElementById('wasm-status');
+            const parseBtn = document.getElementById('parse-btn');
+
+            try {
+                const go = new Go();
+                const result = await WebAssembly.instantiateStreaming(
+                    fetch('parser.wasm'),
+                    go.importObject
+                );
+                go.run(result.instance);
+
+                // 等待 WASM 就緒
+                await new Promise(resolve => {
+                    const check = () => {
+                        if (window.wasmReady) resolve();
+                        else setTimeout(check, 50);
+                    };
+                    check();
+                });
+
+                statusEl.innerHTML = '✅ 解析引擎已就緒！';
+                statusEl.style.background = '#d4edda';
+                statusEl.style.color = '#155724';
+                parseBtn.disabled = false;
+                parseBtn.style.opacity = '1';
+                parseBtn.style.cursor = 'pointer';
+
+            } catch (e) {
+                statusEl.innerHTML = '❌ 載入失敗: ' + e.message + '<br><small>請確認瀏覽器支援 WebAssembly</small>';
+                statusEl.style.background = '#f8d7da';
+                statusEl.style.color = '#721c24';
+            }
+        }
+
+        // 頁面載入後初始化
+        document.addEventListener('DOMContentLoaded', initWasm);
+    </script>
 </body>
 </html>
