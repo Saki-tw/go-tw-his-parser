@@ -251,4 +251,12 @@ GOOS=linux GOARCH=amd64 go build -o his-parser-web-linux-amd64
 
 ---
 
+## 供養 / Support
+
+如果這個工具幫到你，可以請我活下去：
+
+👉 [Touch me if you had desolation](https://saki-tw.github.io/-Touch-me-if-you-had-desolation/)
+
+---
+
 © 2025 [Saki Studio](https://saki-studio.com.tw/)
